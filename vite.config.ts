@@ -1,12 +1,11 @@
-echo "import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: '/policydekhoo/',  // Add this line for GitHub Pages
-    plugins: [react(), tailwindcss()],
+    base: '/policydekhoo/',
+    plugins: [react()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
@@ -17,4 +16,4 @@ export default defineConfig(() => {
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
   };
-});" > vite.config.ts
+});
