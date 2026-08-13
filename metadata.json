@@ -1,0 +1,6 @@
+{
+  "name": "PolicyDekho - India Insurance & Claim Settlement Comparison",
+  "description": "Personalized Premium Estimator, compare Indian insurance policies (Health, Life, Car, Bike), IRDAI Claim Settlement Ratios (CSR), cashless hospital networks, calculate 18% GST premiums, and purchase policies instantly.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

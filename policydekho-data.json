@@ -1,0 +1,94 @@
+{
+  "users": [
+    {
+      "id": "usr_mahesh_101",
+      "fullName": "Mahesh Kumar",
+      "email": "maheshtech89@gmail.com",
+      "passwordHash": "$2a$10$gwu4ChL0dAHmejKhG7RuBuQmlqcMNlD8ma2iBLGknT3paiuHs4I6y",
+      "phone": "+91 98765 43210",
+      "abhaId": "91-8821-4921-0021",
+      "city": "Bengaluru",
+      "pincode": "560001",
+      "kycVerified": true,
+      "createdAt": "2026-08-12T01:21:25.190Z",
+      "isAiProSubscriber": false
+    },
+    {
+      "id": "usr_demo_102",
+      "fullName": "PolicyDekho User",
+      "email": "user@policydekho.in",
+      "passwordHash": "$2a$10$/1PfnlKyWwAbaEWJk2hXBuDEyDVrGi0zH4HBmy.SJ4Xlqq/8EyCA6",
+      "phone": "+91 91234 56789",
+      "abhaId": "12-3456-7890-1234",
+      "city": "Mumbai",
+      "pincode": "400001",
+      "kycVerified": true,
+      "createdAt": "2026-08-12T01:21:25.191Z",
+      "isAiProSubscriber": false
+    }
+  ],
+  "policies": {
+    "usr_mahesh_101": [
+      {
+        "id": "bought-mahesh-01",
+        "policyNumber": "POL-IND-2026-881920",
+        "uin": "IRDAI-UIN-2026-REG-991",
+        "insurerName": "Star Health Insurance",
+        "planName": "Star Comprehensive Optima Plan",
+        "category": "HEALTH",
+        "proposerName": "Mahesh Kumar",
+        "mobile": "+91 98765 43210",
+        "email": "maheshtech89@gmail.com",
+        "city": "Bengaluru",
+        "state": "Karnataka",
+        "pinCode": "560001",
+        "sumInsured": 1000000,
+        "basePremium": 14200,
+        "gstAmount": 2556,
+        "totalPremiumPaid": 16756,
+        "purchaseDate": "2026-01-15",
+        "policyStartDate": "2026-01-15",
+        "policyEndDate": "2027-01-14",
+        "nomineeName": "Anjali Kumar",
+        "nomineeRelation": "Spouse",
+        "cashlessCardNumber": "CARD-IND-88201",
+        "status": "ACTIVE",
+        "addonsSelected": [
+          "100% Restore Benefit",
+          "Hospital Cash Cover"
+        ]
+      }
+    ],
+    "usr_demo_102": [
+      {
+        "id": "bought-demo-01",
+        "policyNumber": "POL-IND-2026-110293",
+        "uin": "IRDAI-UIN-2026-HDFC-301",
+        "insurerName": "HDFC ERGO General Insurance",
+        "planName": "Optima Secure Comprehensive",
+        "category": "HEALTH",
+        "proposerName": "PolicyDekho User",
+        "mobile": "+91 91234 56789",
+        "email": "user@policydekho.in",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "pinCode": "400001",
+        "sumInsured": 1500000,
+        "basePremium": 18500,
+        "gstAmount": 3330,
+        "totalPremiumPaid": 21830,
+        "purchaseDate": "2026-03-01",
+        "policyStartDate": "2026-03-01",
+        "policyEndDate": "2027-02-28",
+        "nomineeName": "Sunita User",
+        "nomineeRelation": "Spouse",
+        "cashlessCardNumber": "CARD-IND-11029",
+        "status": "ACTIVE",
+        "addonsSelected": [
+          "Air Ambulance Cover"
+        ]
+      }
+    ]
+  },
+  "_nextId": 1
+}
