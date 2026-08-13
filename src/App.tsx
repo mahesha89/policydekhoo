@@ -33,9 +33,10 @@ export default function App() {
 
   // Firebase Auth State
   useEffect(() => {
+  try {
     const unsubscribe = onAuthStateChange(async (firebaseUser) => {
-      if (firebaseUser) {
-        try {
+      try {
+        if (firebaseUser) {
           const token = await firebaseUser.getIdToken();
           const userData = await getUserData(firebaseUser.uid);
           
@@ -51,18 +52,22 @@ export default function App() {
           });
           
           localStorage.setItem('policydekho_auth_token', token);
-        } catch (error) {
-          console.error('Error loading user data:', error);
+        } else {
+          setUser(null);
+          localStorage.removeItem('policydekho_auth_token');
         }
-      } else {
+      } catch (error) {
+        console.error('Error processing auth change:', error);
         setUser(null);
-        localStorage.removeItem('policydekho_auth_token');
       }
     });
 
     return () => unsubscribe();
-  }, []);
-
+  } catch (error) {
+    console.error('Auth initialization error:', error);
+    return () => {};
+  }
+}, []);
   // Fetch user policies whenever user state changes
   useEffect(() => {
     if (user && user.id) {
