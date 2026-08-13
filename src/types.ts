@@ -267,18 +267,14 @@ export interface HospitalNetworkItem {
 
 export interface User {
   id: string;
-  fullName: string;
+  name: string;
+  fullName?: string;
   email: string;
-  phone: string;
-  abhaId?: string;
+  mobile?: string;
   city?: string;
-  pincode?: string;
-  kycVerified: boolean;
-  createdAt: string;
-  token?: string;
-  isAiProSubscriber?: boolean;
-  aiProPlanType?: 'MONTHLY_199';
-  aiProExpiryDate?: string;
+  token: string;
+  isPro: boolean;
+  policies: any[];
 }
 
 export interface AuthState {
