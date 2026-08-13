@@ -20,12 +20,14 @@ import { User } from './types';
 
 // Firebase config from environment variables
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+   apiKey: "AIzaSyA1TWJbu_uDAXiBt09ZLsTg-hxA-C8hmVw",
+  authDomain: "insurance-565d9.firebaseapp.com",
+  databaseURL: "https://insurance-565d9-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "insurance-565d9",
+  storageBucket: "insurance-565d9.firebasestorage.app",
+  messagingSenderId: "893365323711",
+  appId: "1:893365323711:web:289c2bc25284070b58c30a",
+  measurementId: "G-8E8EFCTE2F"
 };
 
 // Initialize Firebase
