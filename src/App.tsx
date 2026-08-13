@@ -18,6 +18,7 @@ import { CompanyPortalRedirectModal } from './components/CompanyPortalRedirectMo
 import { AuthModal } from './components/AuthModal';
 import { AIProSubscriptionModal } from './components/AIProSubscriptionModal';
 import { ShieldCheck, IndianRupee } from 'lucide-react';
+import { auth, getUserData, onAuthStateChange, logoutUser } from './firebase';
 
 export default function App() {
   const [policies] = useState<IndianPolicy[]>(INDIAN_POLICIES);
@@ -30,40 +31,44 @@ export default function App() {
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [authRedirectReason, setAuthRedirectReason] = useState<string | undefined>(undefined);
 
-  // Restore session from localStorage on mount and fetch user policies
+  // Firebase Auth State
   useEffect(() => {
-    const savedToken = localStorage.getItem('policydekho_auth_token');
-    if (savedToken) {
-      fetch('/api/auth/me', {
-        headers: { Authorization: `Bearer ${savedToken}` },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success && data.user) {
-            setUser(data.user);
-          } else {
-            localStorage.removeItem('policydekho_auth_token');
-          }
-        })
-        .catch(() => {
-          // Fallback silencer
-        });
-    }
+    const unsubscribe = onAuthStateChange(async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const token = await firebaseUser.getIdToken();
+          const userData = await getUserData(firebaseUser.uid);
+          
+          setUser({
+            id: firebaseUser.uid,
+            name: userData?.name || firebaseUser.displayName || 'User',
+            email: firebaseUser.email || '',
+            mobile: userData?.mobile || '',
+            city: userData?.city || '',
+            token: token,
+            isPro: userData?.isPro || false,
+            policies: userData?.policies || [],
+          });
+          
+          localStorage.setItem('policydekho_auth_token', token);
+        } catch (error) {
+          console.error('Error loading user data:', error);
+        }
+      } else {
+        setUser(null);
+        localStorage.removeItem('policydekho_auth_token');
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   // Fetch user policies whenever user state changes
   useEffect(() => {
-    if (user && user.token) {
-      fetch('/api/user/policies', {
-        headers: { Authorization: `Bearer ${user.token}` },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success && Array.isArray(data.policies)) {
-            setBoughtPolicies(data.policies);
-          }
-        })
-        .catch((err) => console.error('Error loading user policies:', err));
+    if (user && user.id) {
+      // In Firebase, policies are stored in Firestore
+      // We're already loading them in the auth state change
+      // But we can also fetch them separately if needed
     } else if (!user) {
       setBoughtPolicies(INITIAL_BOUGHT_POLICIES);
     }
@@ -82,9 +87,14 @@ export default function App() {
     }
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem('policydekho_auth_token');
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      setUser(null);
+      localStorage.removeItem('policydekho_auth_token');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   // Navigation state
@@ -100,7 +110,6 @@ export default function App() {
   const [isAIAdvisorOpen, setIsAIAdvisorOpen] = useState(false);
   const [isCOIModalOpen, setIsCOIModalOpen] = useState(false);
   const [isAIProModalOpen, setIsAIProModalOpen] = useState(false);
-
 
   // Toggle Policy in Comparison Drawer
   const toggleComparePolicy = (id: string) => {
@@ -252,7 +261,6 @@ export default function App() {
       />
 
       {/* Company Portal Routing Modal */}
-
       {portalRoutingPolicy && (
         <CompanyPortalRedirectModal
           policy={portalRoutingPolicy}

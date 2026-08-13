@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import { X, Mail, Lock, User as UserIcon, Phone, MapPin, ShieldCheck } from 'lucide-react';
+import { registerUser, loginUser } from '../firebase';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -41,43 +42,52 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setError('');
     setIsLoading(true);
 
-    // Simulate API call with mock data
-    setTimeout(() => {
-      // Validate inputs
+    try {
+      let user: User;
+
       if (mode === 'register') {
+        // Validation
         if (!formData.name || formData.name.length < 2) {
-          setError('Please enter your full name');
-          setIsLoading(false);
-          return;
+          throw new Error('Please enter your full name');
         }
         if (!formData.email || !formData.email.includes('@')) {
-          setError('Please enter a valid email address');
-          setIsLoading(false);
-          return;
+          throw new Error('Please enter a valid email address');
         }
         if (!formData.password || formData.password.length < 6) {
-          setError('Password must be at least 6 characters');
-          setIsLoading(false);
-          return;
+          throw new Error('Password must be at least 6 characters');
         }
+        if (!formData.mobile || formData.mobile.length < 10) {
+          throw new Error('Please enter a valid mobile number');
+        }
+
+        // Register with Firebase
+        user = await registerUser({
+          name: formData.name,
+          email: formData.email,
+          mobile: formData.mobile,
+          password: formData.password,
+          city: formData.city,
+          abhaId: formData.abhaId,
+        });
+      } else {
+        // Login
+        if (!formData.email || !formData.email.includes('@')) {
+          throw new Error('Please enter a valid email address');
+        }
+        if (!formData.password || formData.password.length < 6) {
+          throw new Error('Please enter your password');
+        }
+
+        user = await loginUser(formData.email, formData.password);
       }
 
-      // Mock success - create a user object
-      const mockUser: User = {
-        id: `user_${Date.now()}`,
-        name: formData.name || 'User',
-        email: formData.email,
-        mobile: formData.mobile,
-        city: formData.city,
-        token: `mock_token_${Date.now()}`,
-        isPro: false,
-        policies: [],
-      };
-
-      onSuccess(mockUser);
+      onSuccess(user);
       onClose();
       setIsLoading(false);
-    }, 1000);
+    } catch (err: any) {
+      setError(err.message || 'An error occurred');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -115,13 +125,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </div>
         )}
 
-        {/* Demo Mode Notice */}
-        <div className="mb-4 p-2 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-          <p className="text-amber-400 text-xs text-center">
-            🔧 Demo Mode: Registration is simulated (no backend)
-          </p>
-        </div>
-
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === 'register' && (
@@ -138,7 +141,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   onChange={handleChange}
                   placeholder="Your full name"
                   className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-white focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none"
-                  required={mode === 'register'}
+                  required
                 />
               </div>
             </div>
@@ -170,12 +173,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <input
-                  type="text"
+                  type="tel"
                   name="mobile"
                   value={formData.mobile}
                   onChange={handleChange}
                   placeholder="9989635520"
                   className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-white focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 outline-none"
+                  required
                 />
               </div>
             </div>
