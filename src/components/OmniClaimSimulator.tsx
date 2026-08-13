@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+echo "import React, { useState, useMemo } from 'react';
 import { IndianPolicy } from '../types';
 import type { User } from '../types';
 import { INDIAN_POLICIES } from '../data/mockData';
@@ -118,7 +118,7 @@ export const OmniClaimSimulator: React.FC<OmniClaimSimulatorProps> = ({
   const [actualRoomRentPerDay, setActualRoomRentPerDay] = useState<number>(8000);
   const [roomDays, setRoomDays] = useState<number>(selectedPreset.roomDays);
   const [icuDays, setIcuDays] = useState<number>(selectedPreset.icuDays);
-  
+
   // Expenses breakdown
   const [surgeonFee, setSurgeonFee] = useState<number>(selectedPreset.surgeonFee);
   const [otCharges, setOtCharges] = useState<number>(selectedPreset.otCharges);
@@ -146,26 +146,28 @@ export const OmniClaimSimulator: React.FC<OmniClaimSimulatorProps> = ({
   const roomTotalCost = actualRoomRentPerDay * roomDays + (actualRoomRentPerDay * 2) * icuDays;
   const totalHospitalBill = roomTotalCost + surgeonFee + otCharges + medicinesCost + consumablesCost + diagnosticsCost;
 
-  // Filter health policies for simulation
+  // Filter health policies for simulation (with safety check)
   const healthPolicies = useMemo(() => {
-    return INDIAN_POLICIES.filter((p) => p.category === 'HEALTH');
+    return INDIAN_POLICIES.filter((p) => p.category === 'HEALTH' && p.roomRentLimit !== undefined);
   }, []);
 
   // Simulation Algorithm per Policy
   const simulatedResults = useMemo(() => {
     return healthPolicies.map((policy) => {
       const sumInsured = policy.sumInsuredAmount;
-      
+
       // 1. Room Rent Capping & Proportional Deduction Logic
       let allowedRoomRent = actualRoomRentPerDay;
       let roomProportionalFactor = 1.0;
-      
-      // Calculate room limit based on policy terms
-      if (policy.roomRentLimit.includes('1%')) {
+
+      // Calculate room limit based on policy terms with safety check
+      const roomRentLimit = policy.roomRentLimit || 'No Cap';
+
+      if (roomRentLimit.includes('1%')) {
         allowedRoomRent = Math.min(actualRoomRentPerDay, sumInsured * 0.01);
-      } else if (policy.roomRentLimit.includes('Single Private AC') && roomType === 'SUITE') {
+      } else if (roomRentLimit.includes('Single Private AC') && roomType === 'SUITE') {
         allowedRoomRent = actualRoomRentPerDay * 0.6; // 40% excess
-      } else if (policy.roomRentLimit.includes('No Cap')) {
+      } else if (roomRentLimit.includes('No Cap')) {
         allowedRoomRent = actualRoomRentPerDay;
       }
 
@@ -196,7 +198,7 @@ export const OmniClaimSimulator: React.FC<OmniClaimSimulatorProps> = ({
 
       // Sum of Approved Payable Items
       const grossApprovedAmount = approvedRoomCost + approvedAssociatedCharges + medicinesCost + approvedConsumables + diagnosticsCost;
-      
+
       // Apply Copay
       const copayDeduction = grossApprovedAmount * (copayPercent / 100);
       let netClaimPayout = grossApprovedAmount - copayDeduction;
@@ -241,65 +243,65 @@ export const OmniClaimSimulator: React.FC<OmniClaimSimulatorProps> = ({
   const sortedSimulations = [...simulatedResults].sort((a, b) => b.netClaimPayout - a.netClaimPayout);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
+    <div className=\\"space-y-8 animate-in fade-in duration-300\\">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="relative z-10 space-y-3 max-w-3xl">
-          <div className="flex items-center space-x-2">
-            <span className="px-3 py-1 rounded-full bg-emerald-950 border border-emerald-500/60 text-emerald-300 text-xs font-mono font-bold flex items-center space-x-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-              <span>IRDAI OMNI-SIM • WORLD-FIRST CLAIM SIMULATOR</span>
+      <div className=\\"bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden\\">
+        <div className=\\"absolute right-0 top-0 translate-x-12 -translate-y-12 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none\\" />
+
+        <div className=\\"relative z-10 space-y-3 max-w-3xl\\">
+          <div className=\\"flex items-center space-x-2\\">
+            <span className=\\"px-3 py-1 rounded-full bg-emerald-950 border border-emerald-500/60 text-emerald-300 text-xs font-mono font-bold flex items-center space-x-1.5\\">
+              <Sparkles className=\\"w-3.5 h-3.5 text-emerald-400\\" />
+              <span>IRDAI OMNI-SIM ΓÇó WORLD-FIRST CLAIM SIMULATOR</span>
             </span>
-            <span className="px-2.5 py-0.5 rounded-full bg-indigo-950 border border-indigo-500/50 text-indigo-300 text-xs font-mono font-bold">
+            <span className=\\"px-2.5 py-0.5 rounded-full bg-indigo-950 border border-indigo-500/50 text-indigo-300 text-xs font-mono font-bold\\">
               IRDAI CIRCULAR 2024 COMPLIANT
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+          <h1 className=\\"text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight\\">
             Quantum Hospitalization Claim & Out-Of-Pocket Simulator
           </h1>
 
-          <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+          <p className=\\"text-slate-300 text-xs sm:text-sm leading-relaxed\\">
             Simulate real medical emergencies (Surgeries, ICU Stays, Dengue, Cardiac Angioplasty) with custom room rents, doctor fees, and consumables. Watch in real-time how room rent proportional deductions and non-payable clauses impact your out-of-pocket payout across top Indian health policies!
           </p>
         </div>
       </div>
 
       {/* Main Simulation Layout: Left Controls, Right Realtime Visualizer */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className=\\"grid grid-cols-1 lg:grid-cols-12 gap-8\\">
         {/* Left Column: Hospitalization Scenario Builder (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <div className="flex items-center space-x-2">
-                <Sliders className="w-5 h-5 text-emerald-400" />
-                <h2 className="text-base font-extrabold text-white">Hospitalization Builder</h2>
+        <div className=\\"lg:col-span-5 space-y-6\\">
+          <div className=\\"bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6\\">
+            <div className=\\"flex items-center justify-between border-b border-slate-800 pb-4\\">
+              <div className=\\"flex items-center space-x-2\\">
+                <Sliders className=\\"w-5 h-5 text-emerald-400\\" />
+                <h2 className=\\"text-base font-extrabold text-white\\">Hospitalization Builder</h2>
               </div>
-              <span className="text-xs font-mono text-emerald-400 font-bold bg-emerald-950 px-2.5 py-1 rounded-full border border-emerald-800">
-                Total: ₹{totalHospitalBill.toLocaleString('en-IN')}
+              <span className=\\"text-xs font-mono text-emerald-400 font-bold bg-emerald-950 px-2.5 py-1 rounded-full border border-emerald-800\\">
+                Total: Γé╣{totalHospitalBill.toLocaleString('en-IN')}
               </span>
             </div>
 
             {/* Quick Preset Selector Buttons */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-300 block">
+            <div className=\\"space-y-2\\">
+              <label className=\\"text-xs font-bold text-slate-300 block\\">
                 ⚡ Select Sample Medical Scenario:
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className=\\"grid grid-cols-2 gap-2\\">
                 {PRESET_SCENARIOS.map((preset) => (
                   <button
                     key={preset.name}
                     onClick={() => handleSelectPreset(preset)}
-                    className={`p-2.5 rounded-2xl text-left text-xs transition border ${
+                    className=\\"p-2.5 rounded-2xl text-left text-xs transition border \\${
                       selectedPreset.name === preset.name
                         ? 'bg-emerald-950/80 border-emerald-500 text-white font-extrabold shadow-md'
                         : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
-                    }`}
+                    }\\"
                   >
-                    <span className="font-bold block truncate">{preset.name}</span>
-                    <span className="text-[10px] text-emerald-400 font-mono font-bold">
+                    <span className=\\"font-bold block truncate\\">{preset.name}</span>
+                    <span className=\\"text-[10px] text-emerald-400 font-mono font-bold\\">
                       ~₹{preset.avgCost.toLocaleString('en-IN')}
                     </span>
                   </button>
@@ -308,141 +310,141 @@ export const OmniClaimSimulator: React.FC<OmniClaimSimulatorProps> = ({
             </div>
 
             {/* Room Rent & ICU Sliders */}
-            <div className="space-y-4 pt-2 border-t border-slate-800">
+            <div className=\\"space-y-4 pt-2 border-t border-slate-800\\">
               <div>
-                <div className="flex justify-between text-xs font-bold mb-1">
-                  <span className="text-slate-300">Room Rent per Day</span>
-                  <span className="text-emerald-400 font-mono">₹{actualRoomRentPerDay.toLocaleString('en-IN')}/day</span>
+                <div className=\\"flex justify-between text-xs font-bold mb-1\\">
+                  <span className=\\"text-slate-300\\">Room Rent per Day</span>
+                  <span className=\\"text-emerald-400 font-mono\\">₹{actualRoomRentPerDay.toLocaleString('en-IN')}/day</span>
                 </div>
                 <input
-                  type="range"
+                  type=\\"range\\"
                   min={2000}
                   max={25000}
                   step={500}
                   value={actualRoomRentPerDay}
                   onChange={(e) => setActualRoomRentPerDay(Number(e.target.value))}
-                  className="w-full accent-emerald-500 bg-slate-950 rounded-lg cursor-pointer h-2"
+                  className=\\"w-full accent-emerald-500 bg-slate-950 rounded-lg cursor-pointer h-2\\"
                 />
-                <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                <div className=\\"flex justify-between text-[10px] text-slate-500 mt-1 font-mono\\">
                   <span>₹2,000 (Shared)</span>
                   <span>₹8,000 (Private AC)</span>
                   <span>₹25,000 (Suite)</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className=\\"grid grid-cols-2 gap-4\\">
                 <div>
-                  <div className="flex justify-between text-xs font-bold mb-1">
-                    <span className="text-slate-300">Room Days</span>
-                    <span className="text-indigo-400 font-mono">{roomDays} days</span>
+                  <div className=\\"flex justify-between text-xs font-bold mb-1\\">
+                    <span className=\\"text-slate-300\\">Room Days</span>
+                    <span className=\\"text-indigo-400 font-mono\\">{roomDays} days</span>
                   </div>
                   <input
-                    type="range"
+                    type=\\"range\\"
                     min={1}
                     max={15}
                     value={roomDays}
                     onChange={(e) => setRoomDays(Number(e.target.value))}
-                    className="w-full accent-indigo-500 bg-slate-950 rounded-lg cursor-pointer h-2"
+                    className=\\"w-full accent-indigo-500 bg-slate-950 rounded-lg cursor-pointer h-2\\"
                   />
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-xs font-bold mb-1">
-                    <span className="text-slate-300">ICU Days</span>
-                    <span className="text-amber-400 font-mono">{icuDays} days</span>
+                  <div className=\\"flex justify-between text-xs font-bold mb-1\\">
+                    <span className=\\"text-slate-300\\">ICU Days</span>
+                    <span className=\\"text-amber-400 font-mono\\">{icuDays} days</span>
                   </div>
                   <input
-                    type="range"
+                    type=\\"range\\"
                     min={0}
                     max={7}
                     value={icuDays}
                     onChange={(e) => setIcuDays(Number(e.target.value))}
-                    className="w-full accent-amber-500 bg-slate-950 rounded-lg cursor-pointer h-2"
+                    className=\\"w-full accent-amber-500 bg-slate-950 rounded-lg cursor-pointer h-2\\"
                   />
                 </div>
               </div>
             </div>
 
             {/* Expenses Sliders */}
-            <div className="space-y-4 pt-2 border-t border-slate-800">
+            <div className=\\"space-y-4 pt-2 border-t border-slate-800\\">
               <div>
-                <div className="flex justify-between text-xs font-bold mb-1">
-                  <span className="text-slate-300">Surgeon & Specialist Fee</span>
-                  <span className="text-slate-100 font-mono">₹{surgeonFee.toLocaleString('en-IN')}</span>
+                <div className=\\"flex justify-between text-xs font-bold mb-1\\">
+                  <span className=\\"text-slate-300\\">Surgeon & Specialist Fee</span>
+                  <span className=\\"text-slate-100 font-mono\\">₹{surgeonFee.toLocaleString('en-IN')}</span>
                 </div>
                 <input
-                  type="range"
+                  type=\\"range\\"
                   min={10000}
                   max={200000}
                   step={5000}
                   value={surgeonFee}
                   onChange={(e) => setSurgeonFee(Number(e.target.value))}
-                  className="w-full accent-teal-500 bg-slate-950 rounded-lg cursor-pointer h-2"
+                  className=\\"w-full accent-teal-500 bg-slate-950 rounded-lg cursor-pointer h-2\\"
                 />
               </div>
 
               <div>
-                <div className="flex justify-between text-xs font-bold mb-1">
-                  <span className="text-slate-300">Operation Theatre (OT) Charges</span>
-                  <span className="text-slate-100 font-mono">₹{otCharges.toLocaleString('en-IN')}</span>
+                <div className=\\"flex justify-between text-xs font-bold mb-1\\">
+                  <span className=\\"text-slate-300\\">Operation Theatre (OT) Charges</span>
+                  <span className=\\"text-slate-100 font-mono\\">₹{otCharges.toLocaleString('en-IN')}</span>
                 </div>
                 <input
-                  type="range"
+                  type=\\"range\\"
                   min={5000}
                   max={150000}
                   step={5000}
                   value={otCharges}
                   onChange={(e) => setOtCharges(Number(e.target.value))}
-                  className="w-full accent-teal-500 bg-slate-950 rounded-lg cursor-pointer h-2"
+                  className=\\"w-full accent-teal-500 bg-slate-950 rounded-lg cursor-pointer h-2\\"
                 />
               </div>
 
               <div>
-                <div className="flex justify-between text-xs font-bold mb-1">
-                  <span className="text-slate-300">Consumables (Gloves, PPE, Syringes)</span>
-                  <span className="text-amber-400 font-mono">₹{consumablesCost.toLocaleString('en-IN')}</span>
+                <div className=\\"flex justify-between text-xs font-bold mb-1\\">
+                  <span className=\\"text-slate-300\\">Consumables (Gloves, PPE, Syringes)</span>
+                  <span className=\\"text-amber-400 font-mono\\">₹{consumablesCost.toLocaleString('en-IN')}</span>
                 </div>
                 <input
-                  type="range"
+                  type=\\"range\\"
                   min={2000}
                   max={60000}
                   step={2000}
                   value={consumablesCost}
                   onChange={(e) => setConsumablesCost(Number(e.target.value))}
-                  className="w-full accent-amber-500 bg-slate-950 rounded-lg cursor-pointer h-2"
+                  className=\\"w-full accent-amber-500 bg-slate-950 rounded-lg cursor-pointer h-2\\"
                 />
               </div>
             </div>
 
             {/* Rider Simulation Toggles */}
-            <div className="space-y-3 pt-2 border-t border-slate-800 text-xs">
-              <label className="font-bold text-slate-300 block">
-                🛠️ Test Optional Policy Riders:
+            <div className=\\"space-y-3 pt-2 border-t border-slate-800 text-xs\\">
+              <label className=\\"font-bold text-slate-300 block\\">
+                🛡️ Test Optional Policy Riders:
               </label>
 
-              <div className="flex items-center justify-between bg-slate-950 p-3 rounded-2xl border border-slate-800">
+              <div className=\\"flex items-center justify-between bg-slate-950 p-3 rounded-2xl border border-slate-800\\">
                 <div>
-                  <span className="font-bold text-white block">Consumables Cover Rider</span>
-                  <span className="text-slate-400 text-[10px]">Covers gloves, masks & surgical items</span>
+                  <span className=\\"font-bold text-white block\\">Consumables Cover Rider</span>
+                  <span className=\\"text-slate-400 text-[10px]\\">Covers gloves, masks & surgical items</span>
                 </div>
                 <input
-                  type="checkbox"
+                  type=\\"checkbox\\"
                   checked={hasConsumablesRider}
                   onChange={(e) => setHasConsumablesRider(e.target.checked)}
-                  className="w-5 h-5 accent-emerald-500 rounded cursor-pointer"
+                  className=\\"w-5 h-5 accent-emerald-500 rounded cursor-pointer\\"
                 />
               </div>
 
-              <div className="flex items-center justify-between bg-slate-950 p-3 rounded-2xl border border-slate-800">
+              <div className=\\"flex items-center justify-between bg-slate-950 p-3 rounded-2xl border border-slate-800\\">
                 <div>
-                  <span className="font-bold text-white block">Zero Copay / Any Age Cover</span>
-                  <span className="text-slate-400 text-[10px]">Eliminates mandatory senior copay</span>
+                  <span className=\\"font-bold text-white block\\">Zero Copay / Any Age Cover</span>
+                  <span className=\\"text-slate-400 text-[10px]\\">Eliminates mandatory senior copay</span>
                 </div>
                 <input
-                  type="checkbox"
+                  type=\\"checkbox\\"
                   checked={hasZeroCopayRider}
                   onChange={(e) => setHasZeroCopayRider(e.target.checked)}
-                  className="w-5 h-5 accent-emerald-500 rounded cursor-pointer"
+                  className=\\"w-5 h-5 accent-emerald-500 rounded cursor-pointer\\"
                 />
               </div>
             </div>
@@ -450,63 +452,60 @@ export const OmniClaimSimulator: React.FC<OmniClaimSimulatorProps> = ({
         </div>
 
         {/* Right Column: Dynamic Realtime Policy Payout Matrix (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className=\\"lg:col-span-7 space-y-6\\">
           {/* Top Recommendation Summary */}
-          <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-indigo-950 border border-emerald-500/50 rounded-3xl p-6 shadow-xl space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-mono font-bold flex items-center space-x-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>TOP PERFORMING POLICY SIMULATION</span>
-              </span>
-              <span className="text-xs text-slate-400 font-mono">
-                Bill Amount: ₹{totalHospitalBill.toLocaleString('en-IN')}
-              </span>
-            </div>
-
-            <div className="flex items-center space-x-3">
-              <img
-                src={sortedSimulations[0].policy.insurerLogo}
-                alt={sortedSimulations[0].policy.insurerName}
-                className="w-12 h-12 rounded-2xl object-cover bg-slate-950 border border-slate-700 p-1"
-              />
-              <div>
-                <h3 className="text-lg font-black text-white leading-tight">
-                  {sortedSimulations[0].policy.planName}
-                </h3>
-                <p className="text-xs text-slate-300">
-                  {sortedSimulations[0].policy.insurerName} • Sum Insured ₹{(sortedSimulations[0].policy.sumInsuredAmount / 100000).toFixed(0)} Lakhs
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 pt-2 text-center">
-              <div className="bg-slate-950/80 p-3 rounded-2xl border border-slate-800">
-                <span className="text-[10px] text-slate-400 font-bold uppercase block">Approved Cashless</span>
-                <span className="text-base font-extrabold text-emerald-400 font-mono">
-                  ₹{sortedSimulations[0].netClaimPayout.toLocaleString('en-IN')}
+          {sortedSimulations.length > 0 && (
+            <div className=\\"bg-gradient-to-r from-emerald-950 via-slate-900 to-indigo-950 border border-emerald-500/50 rounded-3xl p-6 shadow-xl space-y-3\\">
+              <div className=\\"flex items-center justify-between\\">
+                <span className=\\"px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-mono font-bold flex items-center space-x-1\\">
+                  <CheckCircle2 className=\\"w-3.5 h-3.5 text-emerald-400\\" />
+                  <span>TOP PERFORMING POLICY SIMULATION</span>
+                </span>
+                <span className=\\"text-xs text-slate-400 font-mono\\">
+                  Bill Amount: ₹{totalHospitalBill.toLocaleString('en-IN')}
                 </span>
               </div>
 
-              <div className="bg-slate-950/80 p-3 rounded-2xl border border-slate-800">
-                <span className="text-[10px] text-slate-400 font-bold uppercase block">Out-Of-Pocket Pay</span>
-                <span className="text-base font-extrabold text-amber-400 font-mono">
-                  ₹{sortedSimulations[0].outOfPocketExpense.toLocaleString('en-IN')}
-                </span>
+              <div className=\\"flex items-center space-x-3\\">
+                <div>
+                  <h3 className=\\"text-lg font-black text-white leading-tight\\">
+                    {sortedSimulations[0].policy.planName}
+                  </h3>
+                  <p className=\\"text-xs text-slate-300\\">
+                    {sortedSimulations[0].policy.insurerName} • Sum Insured ₹{(sortedSimulations[0].policy.sumInsuredAmount / 100000).toFixed(0)} Lakhs
+                  </p>
+                </div>
               </div>
 
-              <div className="bg-slate-950/80 p-3 rounded-2xl border border-slate-800">
-                <span className="text-[10px] text-slate-400 font-bold uppercase block">Coverage Ratio</span>
-                <span className="text-base font-extrabold text-indigo-300 font-mono">
-                  {sortedSimulations[0].coverageRatio}%
-                </span>
+              <div className=\\"grid grid-cols-3 gap-3 pt-2 text-center\\">
+                <div className=\\"bg-slate-950/80 p-3 rounded-2xl border border-slate-800\\">
+                  <span className=\\"text-[10px] text-slate-400 font-bold uppercase block\\">Approved Cashless</span>
+                  <span className=\\"text-base font-extrabold text-emerald-400 font-mono\\">
+                    ₹{sortedSimulations[0].netClaimPayout.toLocaleString('en-IN')}
+                  </span>
+                </div>
+
+                <div className=\\"bg-slate-950/80 p-3 rounded-2xl border border-slate-800\\">
+                  <span className=\\"text-[10px] text-slate-400 font-bold uppercase block\\">Out-Of-Pocket Pay</span>
+                  <span className=\\"text-base font-extrabold text-amber-400 font-mono\\">
+                    ₹{sortedSimulations[0].outOfPocketExpense.toLocaleString('en-IN')}
+                  </span>
+                </div>
+
+                <div className=\\"bg-slate-950/80 p-3 rounded-2xl border border-slate-800\\">
+                  <span className=\\"text-[10px] text-slate-400 font-bold uppercase block\\">Coverage Ratio</span>
+                  <span className=\\"text-base font-extrabold text-indigo-300 font-mono\\">
+                    {sortedSimulations[0].coverageRatio}%
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* List of Simulated Policies with Live Visual Progress Bars */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-extrabold text-white flex items-center space-x-2">
-              <Activity className="w-4 h-4 text-emerald-400" />
+          <div className=\\"space-y-4\\">
+            <h3 className=\\"text-sm font-extrabold text-white flex items-center space-x-2\\">
+              <Activity className=\\"w-4 h-4 text-emerald-400\\" />
               <span>Simulated Claim Payout Breakdown Across All Policies</span>
             </h3>
 
@@ -516,78 +515,73 @@ export const OmniClaimSimulator: React.FC<OmniClaimSimulatorProps> = ({
               return (
                 <div
                   key={policy.id}
-                  className="bg-slate-900 border border-slate-800 rounded-3xl p-5 hover:border-slate-700 transition space-y-4 shadow-lg"
+                  className=\\"bg-slate-900 border border-slate-800 rounded-3xl p-5 hover:border-slate-700 transition space-y-4 shadow-lg\\"
                 >
                   {/* Policy Header */}
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center space-x-3">
-                      <img
-                        src={policy.insurerLogo}
-                        alt={policy.insurerName}
-                        className="w-10 h-10 rounded-xl object-cover bg-slate-950 border border-slate-800 p-1"
-                      />
+                  <div className=\\"flex items-start justify-between gap-4\\">
+                    <div className=\\"flex items-center space-x-3\\">
                       <div>
-                        <h4 className="text-sm font-extrabold text-white">{policy.planName}</h4>
-                        <p className="text-xs text-slate-400">{policy.insurerName}</p>
+                        <h4 className=\\"text-sm font-extrabold text-white\\">{policy.planName}</h4>
+                        <p className=\\"text-xs text-slate-400\\">{policy.insurerName}</p>
                       </div>
                     </div>
 
-                    <div className="text-right shrink-0">
-                      <span className="text-xs text-slate-400 block font-mono">
-                        Base Premium: <strong className="text-white">₹{policy.baseAnnualPremium.toLocaleString('en-IN')}</strong>/yr
+                    <div className=\\"text-right shrink-0\\">
+                      <span className=\\"text-xs text-slate-400 block font-mono\\">
+                        Base Premium: <strong className=\\"text-white\\">₹{policy.baseAnnualPremium.toLocaleString('en-IN')}</strong>/yr
                       </span>
                       <button
                         onClick={() => onBuyPolicy(policy)}
-                        className="mt-1 px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-extrabold text-xs shadow-md hover:brightness-110 flex items-center space-x-1"
+                        className=\\"mt-1 px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-extrabold text-xs shadow-md hover:brightness-110 flex items-center space-x-1\\"
                       >
                         <span>Select & Route</span>
-                        <ExternalLink className="w-3 h-3 text-slate-950" />
+                        <ExternalLink className=\\"w-3 h-3 text-slate-950\\" />
                       </button>
                     </div>
                   </div>
 
                   {/* Visual Bar Indicator */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between text-xs font-mono">
-                      <span className="text-emerald-400 font-bold">
+                  <div className=\\"space-y-1.5\\">
+                    <div className=\\"flex justify-between text-xs font-mono\\">
+                      <span className=\\"text-emerald-400 font-bold\\">
                         Approved: ₹{netClaimPayout.toLocaleString('en-IN')} ({coverageRatio}%)
                       </span>
-                      <span className="text-amber-400 font-bold">
+                      <span className=\\"text-amber-400 font-bold\\">
                         You Pay: ₹{outOfPocketExpense.toLocaleString('en-IN')}
                       </span>
                     </div>
 
-                    <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden flex border border-slate-800">
+                    <div className=\\"w-full h-3 bg-slate-950 rounded-full overflow-hidden flex border border-slate-800\\">
                       <div
                         style={{ width: `${coverageRatio}%` }}
-                        className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full transition-all duration-300"
+                        className=\\"bg-gradient-to-r from-emerald-500 to-teal-400 h-full transition-all duration-300\\"
                       />
                       <div
                         style={{ width: `${100 - coverageRatio}%` }}
-                        className="bg-amber-500/80 h-full transition-all duration-300"
+                        className=\\"bg-amber-500/80 h-full transition-all duration-300\\"
                       />
                     </div>
                   </div>
 
                   {/* Deductions Breakdown Pills */}
-                  <div className="grid grid-cols-3 gap-2 text-[11px]">
-                    <div className="bg-slate-950 p-2 rounded-xl border border-slate-800/80">
-                      <span className="text-slate-400 block font-bold">Room Rent Penalty</span>
-                      <span className="text-rose-400 font-mono font-extrabold">
+                  <div className=\\"grid grid-cols-3 gap-2 text-[11px]\\">
+                    <div className=\\"bg-slate-950 p-2 rounded-xl border border-slate-800/80\\">
+                      <span className=\\"text-slate-400 block font-bold\\">Room Rent Penalty</span>
+                      <span className=\\"text-rose-400 font-mono font-extrabold\\">
                         -₹{deductions.roomProportionalDeduction.toLocaleString('en-IN')}
                       </span>
                     </div>
 
-                    <div className="bg-slate-950 p-2 rounded-xl border border-slate-800/80">
-                      <span className="text-slate-400 block font-bold">Consumables Cut</span>
-                      <span className="text-amber-400 font-mono font-extrabold">
+                    <div className=\\"bg-slate-950 p-2 rounded-xl border border-slate-800/80\\">
+                      <span className=\\"text-slate-400 block font-bold\\">Consumables Cut</span>
+                      <span className=\\"text-amber-400 font-mono font-extrabold\\">
                         -₹{deductions.consumablesDeduction.toLocaleString('en-IN')}
                       </span>
                     </div>
 
-                    <div className="bg-slate-950 p-2 rounded-xl border border-slate-800/80">
-                      <span className="text-slate-400 block font-bold">Co-Pay Deduction</span>
-                      <span className="text-indigo-400 font-mono font-extrabold">
+                    <div className=\\"bg-slate-950 p-2 rounded-xl border border-slate-800/80\\">
+                      <span className=\\"text-slate-400 block font-bold\\">Co-Pay Deduction</span>
+                      <span className=\\"text-indigo-400 font-mono font-extrabold\\">
                         -₹{deductions.copayDeduction.toLocaleString('en-IN')}
                       </span>
                     </div>
@@ -600,4 +594,4 @@ export const OmniClaimSimulator: React.FC<OmniClaimSimulatorProps> = ({
       </div>
     </div>
   );
-};
+};" > src\components\OmniClaimSimulator.tsx
