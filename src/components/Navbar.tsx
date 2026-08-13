@@ -238,7 +238,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           ) : (
             <div className="flex items-center space-x-2.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 shadow-md">
               <div className="w-7 h-7 rounded-lg bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center shrink-0">
-                {user.fullName.charAt(0)}
+                {user?.name && user.name.length > 0 ? user.name.charAt(0) : 'U'}
               </div>
               <div className="text-left">
                 <div className="flex items-center space-x-1">
