@@ -34,11 +34,15 @@ export const AIProSubscriptionModal: React.FC<AIProSubscriptionModalProps> = ({
   onOpenAuthModal,
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<'UPI' | 'CARD' | 'NETBANKING'>('UPI');
-  const [upiApp, setUpiApp] = useState<string>('GPay');
-  const [upiIdInput, setUpiIdInput] = useState<string>(user?.email ? `${user.email.split('@')[0]}@okaxis` : 'user@upi');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [activationSuccess, setActivationSuccess] = useState<any>(null);
+const [upiApp, setUpiApp] = useState<string>('GPay');
+const [upiIdInput, setUpiIdInput] = useState<string>(
+  user?.email && typeof user.email === 'string' 
+    ? `${user.email.split('@')[0]}@okaxis` 
+    : 'user@upi'
+);
+const [loading, setLoading] = useState<boolean>(false);
+const [errorMsg, setErrorMsg] = useState<string | null>(null);
+const [activationSuccess, setActivationSuccess] = useState<any>(null);
 
   const handleSubscribe = async () => {
     if (!user) {

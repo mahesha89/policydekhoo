@@ -280,7 +280,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={onLogout}
               className="px-2 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold flex items-center space-x-1"
             >
-              <span>{user.fullName.split(' ')[0]}</span>
+              <span>{(user?.fullName || user?.name || 'User').split(" ")[0]}</span>
               <LogOut className="w-3 h-3 text-rose-400" />
             </button>
           )}
